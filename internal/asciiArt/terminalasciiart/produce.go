@@ -11,48 +11,52 @@ type textProduce struct {
 }
 
 func (t *textProduce) produce() {
-	t.output = Converter(t.input, t.Banner)
+	t.output = converter(t.input, t.Banner)
 }
 
-func Converter(input, banner string) string {
+func converter(input, banner string) string {
+	if input == "" {
+		return ""
+	}
+
 	alphabet := getAlphabet(banner)
 
-	words := strings.Split(input, "\\n")
+	input = strings.ReplaceAll(input, "\\n", "\n")
+
+	words := strings.Split(input, "\n")
 
 	result := make([]string, 0, len(words))
 
 	for j, word := range words {
+
+		if word == "" {
+			result = append(result, "")
+			continue
+		}
+
 		var middleResult string
 
 		for i := 0; i < 8; i++ {
-
-			if word == "" {
-
-				if j == len(words)-1 {
-					middleResult = "\n"
-				}
-				break
+			for _, letter := range word {
+				middleResult += alphabet[letter][i]
 			}
 
-			for _, v := range word {
-				if v == '\n' {
-					continue
-				}
-				middleResult += alphabet[v][i]
-			}
-
-			if i != 7 {
-				middleResult += "\n"
-			}
-
-			if i == 7 && j == len(words)-1 {
+			if i != 7 || j == len(words)-1 {
 				middleResult += "\n"
 			}
 		}
 		result = append(result, middleResult)
 	}
 
-	return strings.Join(result, "\n")
+	res := strings.Join(result, "\n")
+
+	if len(result) > 1 {
+		if result[len(result)-2] != "" && result[len(result)-1] == "" {
+			res += "\n"
+		}
+	}
+
+	return res
 }
 
 func getAlphabet(banner string) map[rune][]string {

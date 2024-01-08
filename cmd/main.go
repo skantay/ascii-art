@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
+	"fmt"
 
 	asciiart "github.com/skantay/ascii-art/internal/asciiArt"
 )
 
 func main() {
 	if err := asciiart.Run(); err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 }

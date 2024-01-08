@@ -14,7 +14,9 @@ type textPresent struct {
 func (t *textPresent) present() error {
 	_, w := getTerminalSize()
 
-	if int(w)*8 < len(t.output) {
+	width := getWidth(t.output)
+
+	if int(w) <= width {
 		return errors.New("present() text is too loooong")
 	}
 
@@ -25,6 +27,23 @@ func (t *textPresent) present() error {
 	fmt.Print(t.output)
 
 	return nil
+}
+
+func getWidth(output string) int {
+	var bufLen int
+	var width int
+
+	for i := 0; i < len(output); i++ {
+		if rune(output[i]) == '\n' {
+			if bufLen > width {
+				width = bufLen
+			}
+			bufLen = 0
+		}
+		bufLen++
+	}
+
+	return width
 }
 
 type winsize struct {

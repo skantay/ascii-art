@@ -13,11 +13,11 @@ type textValid struct {
 }
 
 func (t *textValid) validate() error {
-	if err := ValidateBanner(t.Banner); err != nil {
+	if err := validateBanner(t.Banner); err != nil {
 		return err
 	}
 
-	if err := ValidateInput(t.input); err != nil {
+	if err := validateInput(t.input); err != nil {
 		return err
 	}
 
@@ -25,7 +25,7 @@ func (t *textValid) validate() error {
 }
 
 // This function has unit testing
-func ValidateBanner(banner string) error {
+func validateBanner(banner string) error {
 	hashes := make(map[string]string)
 	hashes["standard.txt"] = "e194f1033442617ab8a78e1ca63a2061f5cc07a3f05ac226ed32eb9dfd22a6bf"
 	hashes["shadow.txt"] = "26b94d0b134b77e9fd23e0360bfd81740f80fb7f6541d1d8c5d85e73ee550f73"
@@ -58,7 +58,7 @@ func ValidateBanner(banner string) error {
 }
 
 // This function has unit testing
-func ValidateInput(input string) error {
+func validateInput(input string) error {
 	for _, v := range input {
 		if 126 < v {
 			return errors.New("validate() non ascii char found")
