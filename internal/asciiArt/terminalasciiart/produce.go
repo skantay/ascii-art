@@ -22,41 +22,55 @@ func converter(input, banner string) string {
 	alphabet := getAlphabet(banner)
 
 	input = strings.ReplaceAll(input, "\\n", "\n")
-
 	words := strings.Split(input, "\n")
-
 	result := make([]string, 0, len(words))
-
-	for j, word := range words {
-
+	for indexWord, word := range words {
 		if word == "" {
-			result = append(result, "")
+			result = append(result, word)
 			continue
 		}
-
 		var middleResult string
-
-		for i := 0; i < 8; i++ {
+		for indexHeight := 0; indexHeight < 8; indexHeight++ {
 			for _, letter := range word {
-				middleResult += alphabet[letter][i]
+				middleResult += alphabet[letter][indexHeight]
 			}
-
-			if i != 7 || j == len(words)-1 {
+			if indexHeight != 7 || indexWord == len(words)-1 {
 				middleResult += "\n"
 			}
 		}
 		result = append(result, middleResult)
 	}
 
+	result = adjustNewLines(result)
+
 	res := strings.Join(result, "\n")
 
-	if len(result) > 1 {
-		if result[len(result)-2] != "" && result[len(result)-1] == "" {
-			res += "\n"
+	return res
+}
+
+func adjustNewLines(result []string) []string {
+	onlyNewLine := true
+	for _, v := range result {
+		if v != "" {
+			onlyNewLine = false
+			break
 		}
 	}
-
-	return res
+	if onlyNewLine {
+		return result
+	}
+	toAdd := false
+	for _, v := range result {
+		if v == "" {
+			toAdd = true
+			continue
+		}
+		toAdd = false
+	}
+	if toAdd {
+		result = append(result, "")
+	}
+	return result
 }
 
 func getAlphabet(banner string) map[rune][]string {
