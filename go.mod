@@ -1,3 +1,3 @@
-module github.com/skantay/ascii-art
+module github.com/skantay/asciiart
 
 go 1.20

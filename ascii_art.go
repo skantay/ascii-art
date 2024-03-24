@@ -1,27 +1,22 @@
-package terminalasciiart
+package asciiart
 
 import (
 	"bufio"
-	"os"
+	"fmt"
+	"io"
 	"strings"
 )
 
-type textProduce struct {
-	*Text
+func GetASCII(word string, file io.Reader) (string, error) {
+	return getASCII(word, file)
 }
 
-func (t *textProduce) produce() {
-	t.output = converter(t.input, t.Banner)
-}
-
-func converter(input, banner string) string {
-	if input == "" {
-		return ""
+func getASCII(input string, file io.Reader) (string, error) {
+	font, err := getFont(file)
+	if err != nil {
+		return "", fmt.Errorf("failed to get font: %w", err)
 	}
 
-	alphabet := getAlphabet(banner)
-
-	input = strings.ReplaceAll(input, "\\n", "\n")
 	words := strings.Split(input, "\n")
 	result := make([]string, 0, len(words))
 	for indexWord, word := range words {
@@ -32,7 +27,7 @@ func converter(input, banner string) string {
 		var middleResult string
 		for indexHeight := 0; indexHeight < 8; indexHeight++ {
 			for _, letter := range word {
-				middleResult += alphabet[letter][indexHeight]
+				middleResult += font[letter][indexHeight]
 			}
 			if indexHeight != 7 || indexWord == len(words)-1 {
 				middleResult += "\n"
@@ -45,7 +40,7 @@ func converter(input, banner string) string {
 
 	res := strings.Join(result, "\n")
 
-	return res
+	return res, nil
 }
 
 func adjustNewLines(result []string) []string {
@@ -73,15 +68,10 @@ func adjustNewLines(result []string) []string {
 	return result
 }
 
-func getAlphabet(banner string) map[rune][]string {
-	cwd, _ := os.Getwd()
-	cwd = trimCwd(cwd)
-	file, _ := os.Open(cwd + "/banners/" + banner)
-	defer file.Close()
-
+func getFont(file io.Reader) (map[rune][]string, error) {
 	scanner := bufio.NewScanner(file)
 
-	alphabet := make(map[rune][]string, 110)
+	alphabet := make(map[rune][]string, 150)
 
 	var indexRune rune = 32
 
@@ -106,5 +96,5 @@ func getAlphabet(banner string) map[rune][]string {
 		skip = true
 	}
 
-	return alphabet
+	return alphabet, nil
 }
